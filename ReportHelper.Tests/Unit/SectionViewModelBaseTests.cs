@@ -11,7 +11,7 @@ namespace ReportHelper.Tests.Unit
             var viewModel = new SectionViewModelBase();
             bool eventFired = false;
             viewModel.SectionAdvanced += (sender, args) => eventFired = true;
-            viewModel.RequiredFields.Add("Officer Name", "Jhon Doe");
+            viewModel.RequiredFields.Add("Officer Name", "John Doe");
 
             //Act
             viewModel.OnConfirm();
@@ -28,7 +28,7 @@ namespace ReportHelper.Tests.Unit
             var viewModel = new SectionViewModelBase();
             bool eventFired = false;
             viewModel.SectionAdvanced += (sender, args) => eventFired = true;
-            viewModel.RequiredFields.Add("Officer Name", ""); //missing required field
+            viewModel.RequiredFields.Add("Officer Name", ""); // missing required field
 
             //Act
             viewModel.OnConfirm();
