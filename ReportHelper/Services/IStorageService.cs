@@ -1,3 +1,5 @@
+﻿using ReportHelper.Models;
+
 ﻿namespace ReportHelper.Services
 {
     public interface IStorageService
