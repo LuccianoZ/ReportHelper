@@ -30,7 +30,6 @@ namespace ReportHelper.Tests.Integration
         {
             // Arrange + Act: database is already initialised in the constructor.
 
-
             using var connection = new SqliteConnection($"Data Source={_testDbPath}");
             connection.Open();
 
@@ -44,6 +43,7 @@ namespace ReportHelper.Tests.Integration
 
                 var result = command.ExecuteScalar() as string;
 
+                //Assert
                 Assert.Equal(tableName, result);
             }
         }

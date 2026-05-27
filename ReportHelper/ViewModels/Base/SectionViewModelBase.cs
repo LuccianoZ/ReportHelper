@@ -9,7 +9,7 @@ namespace ReportHelper.ViewModels.Base
         [ObservableProperty]
         private bool _canAdvance = false; //whether the officer has completed the current section and can move on to the next one
         [ObservableProperty]
-        private string _errorMessage = string.Empty;
+        private string? _errorMessage = string.Empty;
         public Dictionary<string, string> RequiredFields { get; } = new Dictionary<string, string>();
 
         protected virtual void ValidateRequiredFields() 
