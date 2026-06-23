@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:ReportHelper"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!-- Defined here so all views can use {StaticResource BoolToVis} regardless
+             of where they sit in the visual tree. -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Application.Resources>
 </Application>

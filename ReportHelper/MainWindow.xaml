@@ -1,12 +1,27 @@
-﻿<Window x:Class="ReportHelper.MainWindow"
+<Window x:Class="ReportHelper.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ReportHelper"
+        xmlns:vm="clr-namespace:ReportHelper.ViewModels"
+        xmlns:views="clr-namespace:ReportHelper.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Report Helper" Height="600" Width="860">
 
-    </Grid>
+    <Window.Resources>
+        <!-- DataTemplate pattern: when a ContentControl's Content is a HomeViewModel,
+             WPF automatically instantiates HomeView and sets its DataContext to that
+             ViewModel. No code-behind navigation logic needed. -->
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+            <views:HomeView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:SectionShellViewModel}">
+            <views:SectionShellView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <!-- CurrentViewModel changes drive which view is displayed. -->
+    <ContentControl Content="{Binding CurrentViewModel}"/>
+
 </Window>

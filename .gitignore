@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Whisper model - too large for GitHub, distributed separately
+ReportHelper/Models/Whisper/*.bin
+
+bin/
+obj/
+.vs/
