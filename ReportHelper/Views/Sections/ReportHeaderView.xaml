@@ -1,0 +1,208 @@
+<UserControl x:Class="ReportHelper.Views.Sections.ReportHeaderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!-- Shared label style for every field in this form — keeps the
+             label-above-control rhythm consistent without repeating the same
+             four attributes on every TextBlock below. -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <!-- Shared spacing for each field's outer container, so every
+             label+control pair lines up identically down the form. -->
+        <Style x:Key="FieldContainer" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,0,16,16"/>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- ScrollViewer: 12 fields will not all fit in the SectionShellView's
+         content row on a typical laptop screen, so this section needs to
+         scroll independently rather than letting content get clipped. -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+
+            <!-- S1.1 — Report Number. Read-only, auto-generated (BL-09).
+                 Styled distinctly (greyed background, no border focus) so it
+                 visually signals "system-filled" rather than inviting a click. -->
+            <StackPanel Style="{StaticResource FieldContainer}">
+                <TextBlock Text="Report Number" Style="{StaticResource FieldLabel}"/>
+                <TextBox Text="{Binding ReportNumber}"
+                         IsReadOnly="True"
+                         Background="#F1F5F9"
+                         Foreground="#475569"
+                         Padding="10,8"
+                         BorderBrush="#E2E8F0"/>
+            </StackPanel>
+
+            <!-- S1.2 / S1.3 — Report Date & Time, side by side. -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Style="{StaticResource FieldContainer}">
+                    <TextBlock Text="Report Date" Style="{StaticResource FieldLabel}"/>
+                    <DatePicker SelectedDate="{Binding ReportDate}" Padding="8,6"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                    <TextBlock Text="Report Time" Style="{StaticResource FieldLabel}"/>
+                    <!-- Free-text time entry — no native WPF TimePicker exists.
+                         The TimeSpanConverter (StaticResource, declared in
+                         App.xaml) handles TimeSpan? <-> string in both
+                         directions, including a tolerant parse on the way back
+                         in (accepts "14:30" or "2:30 PM"). -->
+                    <TextBox Text="{Binding ReportTime, Converter={StaticResource TimeSpanConverter}, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                             Padding="10,8"
+                             ToolTip="e.g. 2:30 PM or 14:30"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- S1.4 — Officer Name. Voice-enabled: TextBox + Dictate button,
+                 per EC-01/EC-03 — manual fallback must always be available
+                 alongside voice input, never voice-only. -->
+            <StackPanel Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                <TextBlock Text="Officer Name" Style="{StaticResource FieldLabel}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Text="{Binding OfficerName}" Padding="10,8"/>
+                    <Button x:Name="OfficerNameDictateButton" Grid.Column="1" Content="🎙" Margin="8,0,0,0" Padding="12,8"
+                            IsEnabled="{Binding IsDictateEnabled}"
+                            PreviewMouseLeftButtonDown="OfficerNameDictate_MouseDown"
+                            PreviewMouseLeftButtonUp="Dictate_MouseUp"
+                            ToolTip="Hold to dictate"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- S1.5 / S1.6 — Badge Number, Unit/Division. Same voice-enabled
+                 pattern as Officer Name above, side by side to save vertical
+                 space since both are short values. -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Style="{StaticResource FieldContainer}">
+                    <TextBlock Text="Badge / Officer ID" Style="{StaticResource FieldLabel}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding BadgeNumber}" Padding="10,8"/>
+                        <Button x:Name="BadgeNumberDictateButton" Grid.Column="1" Content="🎙" Margin="8,0,0,0" Padding="12,8"
+                                IsEnabled="{Binding IsDictateEnabled}"
+                                PreviewMouseLeftButtonDown="BadgeNumberDictate_MouseDown"
+                                PreviewMouseLeftButtonUp="Dictate_MouseUp"
+                                ToolTip="Hold to dictate"/>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                    <TextBlock Text="Unit / Division" Style="{StaticResource FieldLabel}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Text="{Binding UnitDivision}" Padding="10,8"/>
+                        <Button x:Name="UnitDivisionDictateButton" Grid.Column="1" Content="🎙" Margin="8,0,0,0" Padding="12,8"
+                                IsEnabled="{Binding IsDictateEnabled}"
+                                PreviewMouseLeftButtonDown="UnitDivisionDictate_MouseDown"
+                                PreviewMouseLeftButtonUp="Dictate_MouseUp"
+                                ToolTip="Hold to dictate"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
+            <!-- S1.7 — Incident Classification (Select). ComboBox bound to the
+                 fixed option list exposed on the ViewModel. -->
+            <StackPanel Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                <TextBlock Text="Incident Classification" Style="{StaticResource FieldLabel}"/>
+                <ComboBox ItemsSource="{Binding IncidentClassificationOptions}"
+                          SelectedItem="{Binding IncidentClassification}"
+                          Padding="10,8"/>
+            </StackPanel>
+
+            <!-- S1.8 / S1.9 — Incident Date, Incident Time (start + end range).
+                 Three fields across one row: the date, then the two times that
+                 make up the range. End is optional (single-point incidents
+                 leave it blank), but it shares the same control/converter as
+                 every other time field — optionality is a validation concern
+                 (BL-11), not a different input shape. -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Style="{StaticResource FieldContainer}">
+                    <TextBlock Text="Incident Date" Style="{StaticResource FieldLabel}"/>
+                    <DatePicker SelectedDate="{Binding IncidentDate}" Padding="8,6"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}">
+                    <TextBlock Text="Incident Time (start)" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding IncidentTimeStart, Converter={StaticResource TimeSpanConverter}, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                             Padding="10,8"
+                             ToolTip="e.g. 2:30 PM or 14:30"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                    <TextBlock Text="Incident Time (end, optional)" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding IncidentTimeEnd, Converter={StaticResource TimeSpanConverter}, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                             Padding="10,8"
+                             ToolTip="Leave blank if not a range"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- S1.10 / S1.11 — Dispatch Time (optional), Arrival Time
+                 (required). Dispatch is visually marked "optional" in its
+                 label so the officer isn't left guessing why it doesn't block
+                 Confirm once BL-11 wires validation. -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Style="{StaticResource FieldContainer}">
+                    <TextBlock Text="Dispatch Time (optional)" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding DispatchTime, Converter={StaticResource TimeSpanConverter}, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                             Padding="10,8"
+                             ToolTip="e.g. 2:30 PM or 14:30"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                    <TextBlock Text="Arrival Time" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding ArrivalTime, Converter={StaticResource TimeSpanConverter}, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+                             Padding="10,8"
+                             ToolTip="e.g. 2:30 PM or 14:30"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- S1.12 — Report Status (Select). -->
+            <StackPanel Style="{StaticResource FieldContainer}" Margin="0,0,0,16">
+                <TextBlock Text="Report Status" Style="{StaticResource FieldLabel}"/>
+                <ComboBox ItemsSource="{Binding ReportStatusOptions}"
+                          SelectedItem="{Binding ReportStatus}"
+                          Padding="10,8"/>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

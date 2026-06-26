@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sections="clr-namespace:ReportHelper.ViewModels.Sections"
+                    xmlns:views="clr-namespace:ReportHelper.Views.Sections">
+
+    <!--
+        SectionShellView's ContentControl binds Content to CurrentSectionViewModel
+        (an ObservableObject, e.g. ReportHeaderViewModel). WPF has no way to know
+        which View renders a given ViewModel unless told explicitly — that's what
+        this file is for: one DataTemplate per section, each keyed by DataType to
+        a ViewModel and wrapping the matching View.
+
+        WHY A SEPARATE FILE: App.xaml holds app-wide resources like value
+        converters (BoolToVis, TimeSpanConverter) — a different concern from
+        view-resolution mapping. There will be one entry here per section (S1–S9,
+        per A-03), so this file's whole purpose is "ViewModel → View," kept
+        separate from App.xaml so that file doesn't grow into an unrelated grab-bag
+        as sections S2 through S9 are added in later sprints.
+
+        HOW IT'S WIRED: merged into Application.Resources via
+        <ResourceDictionary.MergedDictionaries> in App.xaml. Once merged, WPF
+        automatically applies the matching DataTemplate any time a ContentControl
+        (or similar) is asked to display an object of that DataType — no further
+        binding is needed beyond what SectionShellView.xaml already has.
+    -->
+
+    <!-- S1 — Report Header (BL-09/BL-10) -->
+    <DataTemplate DataType="{x:Type sections:ReportHeaderViewModel}">
+        <views:ReportHeaderView/>
+    </DataTemplate>
+
+</ResourceDictionary>

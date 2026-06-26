@@ -1,10 +1,27 @@
 ﻿<Application x:Class="ReportHelper.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ReportHelper">
+             xmlns:local="clr-namespace:ReportHelper"
+             xmlns:converters="clr-namespace:ReportHelper.Converters">
     <Application.Resources>
-        <!-- Defined here so all views can use {StaticResource BoolToVis} regardless
-             of where they sit in the visual tree. -->
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- DataTemplates mapping each section ViewModel (S1–S9) to its
+                     View. Kept in its own file/dictionary, separate from the
+                     converters below, since its only job is view resolution —
+                     see SectionDataTemplates.xaml for the full rationale. -->
+                <ResourceDictionary Source="Views/SectionDataTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Defined here so all views can use {StaticResource BoolToVis} regardless
+                 of where they sit in the visual tree. -->
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+            <!-- BL-10: bridges TimeSpan? (ViewModel) <-> string (TextBox.Text), since
+                 WPF has no built-in TimePicker control. Same app-level scope rule as
+                 BoolToVis above — declared once here, used via {StaticResource
+                 TimeSpanConverter} from any section view. -->
+            <converters:NullableTimeSpanToStringConverter x:Key="TimeSpanConverter"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
