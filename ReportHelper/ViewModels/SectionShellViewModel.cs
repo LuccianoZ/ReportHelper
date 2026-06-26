@@ -1,11 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ReportHelper.Services;
+using ReportHelper.ViewModels.Sections;
 
 namespace ReportHelper.ViewModels
 {
     public partial class SectionShellViewModel : ObservableObject
     {
-        private readonly Action<ObservableObject> _navigate;
+        private readonly INavigationService _navigation;
 
         [ObservableProperty]
         private string _sectionTitle = "Report Header";
@@ -29,9 +31,17 @@ namespace ReportHelper.ViewModels
                       .Select(i => i <= CurrentSectionNumber)
                       .ToList();
 
-        public SectionShellViewModel(Action<ObservableObject> navigate)
+        public SectionShellViewModel(INavigationService navigation)
         {
-            _navigate = navigate;
+            _navigation = navigation;
+
+            // S1 (Report Header) is always the first section an officer sees when
+            // starting a new report. This uses Resolve<T>(), NOT NavigateTo<T>() —
+            // NavigateTo would set MainViewModel.CurrentViewModel, replacing this
+            // shell entirely instead of populating its inner content area. Resolve
+            // builds the ViewModel the same way (services from the container) but
+            // hands it back instead of touching the top-level screen.
+            CurrentSectionViewModel = _navigation.Resolve<ReportHeaderViewModel>();
         }
 
         partial void OnCurrentSectionNumberChanged(int value)
@@ -53,7 +63,7 @@ namespace ReportHelper.ViewModels
         public void CancelReport()
         {
             IsCancelPromptVisible = false;
-            _navigate(new HomeViewModel(_navigate));
+            _navigation.NavigateTo<HomeViewModel>();
         }
 
         [RelayCommand]
@@ -63,6 +73,6 @@ namespace ReportHelper.ViewModels
         private void SaveDraft() { }
 
         [RelayCommand]
-        private void GoHome() => _navigate(new HomeViewModel(_navigate));
+        private void GoHome() => _navigation.NavigateTo<HomeViewModel>();
     }
 }

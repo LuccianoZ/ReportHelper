@@ -16,6 +16,7 @@ namespace ReportHelper.Tests.Unit
         public List<ReportRecord> GetAllReports() => new List<ReportRecord>();
         public void SaveDraft(ReportRecord draft) { }
         public ReportRecord? LoadDraft() => null;
+        public string GetNextReportNumber(DateTime date) => "TEST-0001";
     }
 
     public class SignOffViewModelTests

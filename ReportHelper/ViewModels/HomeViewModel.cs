@@ -1,23 +1,23 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ReportHelper.Services;
 
 namespace ReportHelper.ViewModels
 {
     public partial class HomeViewModel : ObservableObject
     {
-        // Callback provided by MainViewModel — calling it changes the current screen.
-        private readonly Action<ObservableObject> _navigate;
+        private readonly INavigationService _navigation;
 
-        public HomeViewModel(Action<ObservableObject> navigate)
+        public HomeViewModel(INavigationService navigation)
         {
-            _navigate = navigate;
+            _navigation = navigation;
         }
 
         // SC-02: Navigates to the section shell, which starts at S1 (Report Header).
         [RelayCommand]
         private void StartNewReport()
         {
-            _navigate(new SectionShellViewModel(_navigate));
+            _navigation.NavigateTo<SectionShellViewModel>();
         }
 
         // Placeholder — report history view is Sprint 2 (BL-28).
